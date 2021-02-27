@@ -8,41 +8,43 @@ import java.util.Set;
 
 /**
  * ServerStatusAfterSplit
- * <p/>
- * ServerStatus refactored to use split locks
  *
+ * <p>ServerStatus refactored to use split locks
  */
 @ThreadSafe
 public class ServerStatusAfterSplit {
-    @GuardedBy("users") private final Set<String> users;
-    @GuardedBy("queries") private final Set<String> queries;
+  @GuardedBy("users")
+  private final Set<String> users;
 
-    public ServerStatusAfterSplit() {
-        users = new HashSet<>();
-        queries = new HashSet<>();
-    }
+  @GuardedBy("queries")
+  private final Set<String> queries;
 
-    public void addUser(String user) {
-        synchronized (users) {
-            users.add(user);
-        }
-    }
+  public ServerStatusAfterSplit() {
+    users = new HashSet<>();
+    queries = new HashSet<>();
+  }
 
-    public synchronized void removeUser(String user) {
-        synchronized (users) {
-            users.remove(user);
-        }
+  public void addUser(String user) {
+    synchronized (users) {
+      users.add(user);
     }
+  }
 
-    public synchronized void addQuery(String query) {
-        synchronized (queries) {
-            queries.add(query);
-        }
+  public synchronized void removeUser(String user) {
+    synchronized (users) {
+      users.remove(user);
     }
+  }
 
-    public synchronized void removeQuery(String query) {
-        synchronized (queries) {
-            queries.remove(query);
-        }
+  public synchronized void addQuery(String query) {
+    synchronized (queries) {
+      queries.add(query);
     }
+  }
+
+  public synchronized void removeQuery(String query) {
+    synchronized (queries) {
+      queries.remove(query);
+    }
+  }
 }

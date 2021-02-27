@@ -7,16 +7,15 @@ import java.util.logging.Logger;
 
 /**
  * UEHLogger
- * <p/>
- * UncaughtExceptionHandler that logs the exception
  *
+ * <p>UncaughtExceptionHandler that logs the exception
  */
 public class UEHLogger implements Thread.UncaughtExceptionHandler {
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        Logger logger = Logger.getAnonymousLogger();
+  @Override
+  public void uncaughtException(Thread t, Throwable e) {
+    Logger logger = Logger.getAnonymousLogger();
     logger.log(Level.SEVERE, "Thread terminated with exception: " + t.getName(), e);
-        Deque<Character> stack = new ArrayDeque<>();
-        stack.peek();
-    }
+    Deque<Character> stack = new ArrayDeque<>();
+    stack.peek();
+  }
 }

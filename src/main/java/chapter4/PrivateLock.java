@@ -4,20 +4,20 @@ import annotations.GuardedBy;
 
 /**
  * PrivateLock
- * <p/>
- * Guarding state with a private lock
  *
+ * <p>Guarding state with a private lock
  */
 public class PrivateLock {
-    private final Object myLock = new Object();
-    @GuardedBy("myLock") Widget widget;
+  private final Object myLock = new Object();
 
-    void someMethod() {
-        synchronized (myLock) {
-            // Access or modify the state of widget
-        }
-    }
+  @GuardedBy("myLock")
+  Widget widget;
 
-    interface Widget {
+  void someMethod() {
+    synchronized (myLock) {
+      // Access or modify the state of widget
     }
+  }
+
+  interface Widget {}
 }

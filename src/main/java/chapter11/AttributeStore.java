@@ -9,21 +9,21 @@ import java.util.regex.Pattern;
 
 /**
  * AttributeStore
- * <p/>
- * Holding a lock longer than necessary
  *
+ * <p>Holding a lock longer than necessary
  */
 @ThreadSafe
 public class AttributeStore {
-    @GuardedBy("this") private final Map<String, String> attributes = new HashMap<>();
+  @GuardedBy("this")
+  private final Map<String, String> attributes = new HashMap<>();
 
-    public synchronized boolean userLocationMatches(String name, String regexp) {
-        String key = "users." + name + ".location";
-        String location = attributes.get(key);
-        if (location == null) {
-            return false;
-        } else {
-            return Pattern.matches(regexp, location);
-        }
+  public synchronized boolean userLocationMatches(String name, String regexp) {
+    String key = "users." + name + ".location";
+    String location = attributes.get(key);
+    if (location == null) {
+      return false;
+    } else {
+      return Pattern.matches(regexp, location);
     }
+  }
 }

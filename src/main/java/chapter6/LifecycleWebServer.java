@@ -11,57 +11,52 @@ import java.util.logging.Logger;
 
 /**
  * LifecycleWebServer
- * <p/>
- * Web server with shutdown support
  *
+ * <p>Web server with shutdown support
  */
 public class LifecycleWebServer {
-    private static final ExecutorService executorService = Executors.newCachedThreadPool();
+  private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public void start() throws IOException {
-        ServerSocket socket = new ServerSocket(80);
-        while (!executorService.isShutdown()) {
-            try {
-                final Socket connection = socket.accept();
-                executorService.execute(() -> handleRequest(connection));
-            } catch (RejectedExecutionException e) {
-                if (!executorService.isShutdown()) {
-                    log("task submission rejected", e);
-                }
-            }
+  public void start() throws IOException {
+    ServerSocket socket = new ServerSocket(80);
+    while (!executorService.isShutdown()) {
+      try {
+        final Socket connection = socket.accept();
+        executorService.execute(() -> handleRequest(connection));
+      } catch (RejectedExecutionException e) {
+        if (!executorService.isShutdown()) {
+          log("task submission rejected", e);
         }
+      }
     }
+  }
 
-    public void stop() {
-        executorService.shutdown();
+  public void stop() {
+    executorService.shutdown();
+  }
+
+  private void log(String msg, Exception e) {
+    Logger.getAnonymousLogger().log(Level.WARNING, msg, e);
+  }
+
+  private void handleRequest(Socket connection) {
+    Request request = readRequest(connection);
+    if (isShutdownRequest(request)) {
+      stop();
+    } else {
+      dispatchRequest(request);
     }
+  }
 
-    private void log(String msg, Exception e) {
-        Logger.getAnonymousLogger().log(Level.WARNING, msg, e);
-    }
+  private void dispatchRequest(Request request) {}
 
-    private void handleRequest(Socket connection) {
-        Request request = readRequest(connection);
-        if (isShutdownRequest(request)) {
-            stop();
-        } else {
-            dispatchRequest(request);
-        }
-    }
+  private boolean isShutdownRequest(Request request) {
+    return false;
+  }
 
-    private void dispatchRequest(Request request) {
-    }
+  private Request readRequest(Socket connection) {
+    return null;
+  }
 
-    private boolean isShutdownRequest(Request request) {
-        return false;
-    }
-
-    interface Request {
-    }
-
-    private Request readRequest(Socket connection) {
-        return null;
-    }
-
-
+  interface Request {}
 }

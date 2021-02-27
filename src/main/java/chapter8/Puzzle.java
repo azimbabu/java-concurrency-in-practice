@@ -4,16 +4,15 @@ import java.util.Set;
 
 /**
  * Puzzle
- * <p/>
- * Abstraction for puzzles like the 'sliding blocks puzzle'
  *
+ * <p>Abstraction for puzzles like the 'sliding blocks puzzle'
  */
 public interface Puzzle<P, M> {
-    P initialPosition();
+  P initialPosition();
 
-    boolean isGoal(P position);
+  boolean isGoal(P position);
 
-    Set<M> legalMoves(P position);
+  Set<M> legalMoves(P position);
 
-    P move(P position, M move);
+  P move(P position, M move);
 }

@@ -6,13 +6,23 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * https://www.baeldung.com/cs/semaphore
- */
+/** https://www.baeldung.com/cs/semaphore */
 public class ReaderMultipleWriters {
 
   private static final AtomicInteger counter = new AtomicInteger();
   private static final int MAX = 100;
+
+  public static void main(String[] args) {
+    Semaphore write = new Semaphore(1);
+    Semaphore mutex = new Semaphore(1);
+    AtomicInteger data = new AtomicInteger();
+    AtomicInteger readCount = new AtomicInteger();
+
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(new Writer(write, data));
+    executorService.execute(new Reader(write, mutex, data, readCount));
+    executorService.shutdown();
+  }
 
   static class Writer implements Runnable {
     private Semaphore write;
@@ -98,17 +108,5 @@ public class ReaderMultipleWriters {
         e.printStackTrace();
       }
     }
-  }
-
-  public static void main(String[] args) {
-    Semaphore write = new Semaphore(1);
-    Semaphore mutex = new Semaphore(1);
-    AtomicInteger data = new AtomicInteger();
-    AtomicInteger readCount = new AtomicInteger();
-
-    ExecutorService executorService = Executors.newCachedThreadPool();
-    executorService.execute(new Writer(write, data));
-    executorService.execute(new Reader(write, mutex, data, readCount));
-    executorService.shutdown();
   }
 }

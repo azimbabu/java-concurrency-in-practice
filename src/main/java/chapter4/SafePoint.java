@@ -3,33 +3,33 @@ package chapter4;
 import annotations.GuardedBy;
 import annotations.ThreadSafe;
 
-/**
- * SafePoint
- *
- */
+/** SafePoint */
 @ThreadSafe
 public class SafePoint {
-    @GuardedBy("this") private int x;
-    @GuardedBy("this") private int y;
+  @GuardedBy("this")
+  private int x;
 
-    public SafePoint(SafePoint point) {
-        this(point.get());
-    }
+  @GuardedBy("this")
+  private int y;
 
-    private SafePoint(int[] coordinates) {
-        this(coordinates[0], coordinates[1]);
-    }
+  public SafePoint(SafePoint point) {
+    this(point.get());
+  }
 
-    public SafePoint(int x, int y) {
-        set(x, y);
-    }
+  private SafePoint(int[] coordinates) {
+    this(coordinates[0], coordinates[1]);
+  }
 
-    public synchronized void set(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
+  public SafePoint(int x, int y) {
+    set(x, y);
+  }
 
-    public synchronized int[] get() {
-        return new int[]{x, y};
-    }
+  public synchronized void set(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  public synchronized int[] get() {
+    return new int[] {x, y};
+  }
 }

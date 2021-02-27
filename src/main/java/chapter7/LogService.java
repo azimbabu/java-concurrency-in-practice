@@ -9,71 +9,73 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * LogService
- * <p/>
- * Adding reliable cancellation to LogWriter
  *
+ * <p>Adding reliable cancellation to LogWriter
  */
 public class LogService {
-    private final BlockingQueue<String> queue;
-    private final LoggerThread loggerThread;
-    private final PrintWriter writer;
+  private final BlockingQueue<String> queue;
+  private final LoggerThread loggerThread;
+  private final PrintWriter writer;
 
-    @GuardedBy("this") private boolean isShutdown;
-    @GuardedBy("this") private int reservations;
+  @GuardedBy("this")
+  private boolean isShutdown;
 
-    public LogService(Writer writer) {
-        this.queue = new LinkedBlockingQueue<>();
-        this.loggerThread = new LoggerThread();
-        this.writer = new PrintWriter(writer);
+  @GuardedBy("this")
+  private int reservations;
+
+  public LogService(Writer writer) {
+    this.queue = new LinkedBlockingQueue<>();
+    this.loggerThread = new LoggerThread();
+    this.writer = new PrintWriter(writer);
+  }
+
+  public void start() {
+    loggerThread.start();
+  }
+
+  public void stop() {
+    synchronized (this) {
+      this.isShutdown = true;
     }
+    loggerThread.interrupt();
+  }
 
-    public void start() {
-        loggerThread.start();
+  public void log(String message) throws InterruptedException {
+    synchronized (this) {
+      if (isShutdown) {
+        throw new IllegalStateException();
+      }
+      ++reservations;
     }
+    queue.put(message);
+  }
 
-    public void stop() {
-        synchronized (this) {
-            this.isShutdown = true;
-        }
-        loggerThread.interrupt();
-    }
-
-    public void log(String message) throws InterruptedException {
-        synchronized (this) {
-            if (isShutdown) {
-                throw new IllegalStateException();
+  private class LoggerThread extends Thread {
+    @Override
+    public void run() {
+      try {
+        while (true) {
+          try {
+            synchronized (LogService.this) {
+              if (isShutdown && reservations == 0) {
+                break;
+              }
             }
-            ++reservations;
-        }
-        queue.put(message);
-    }
 
-    private class LoggerThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                while (true) {
-                    try {
-                        synchronized (LogService.this) {
-                            if (isShutdown && reservations == 0) {
-                                break;
-                            }
-                        }
+            String message = queue.take();
 
-                        String message = queue.take();
-
-                        synchronized (LogService.this) {
-                            --reservations;
-                        }
-
-                        writer.println(message);
-                    } catch (InterruptedException e) {
-                        /* retry */
-                    }
-                }
-            } finally {
-                writer.close();
+            synchronized (LogService.this) {
+              --reservations;
             }
+
+            writer.println(message);
+          } catch (InterruptedException e) {
+            /* retry */
+          }
         }
+      } finally {
+        writer.close();
+      }
     }
+  }
 }

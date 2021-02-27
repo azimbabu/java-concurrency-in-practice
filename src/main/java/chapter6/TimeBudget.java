@@ -42,6 +42,14 @@ public class TimeBudget {
     return quotes;
   }
 
+  interface TravelCompany {
+    TravelQuote solicitQuote(TravelInfo travelInfo) throws Exception;
+  }
+
+  interface TravelQuote {}
+
+  interface TravelInfo {}
+
   private static class QuoteTask implements Callable<TravelQuote> {
     private final TravelCompany company;
     private final TravelInfo travelInfo;
@@ -64,12 +72,4 @@ public class TimeBudget {
       return company.solicitQuote(travelInfo);
     }
   }
-
-  interface TravelCompany {
-    TravelQuote solicitQuote(TravelInfo travelInfo) throws Exception;
-  }
-
-  interface TravelQuote {}
-
-  interface TravelInfo {}
 }

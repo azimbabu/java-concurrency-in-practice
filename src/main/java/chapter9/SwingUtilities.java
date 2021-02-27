@@ -5,37 +5,38 @@ import java.util.concurrent.*;
 
 /**
  * SwingUtilities
- * <p/>
- * Implementing SwingUtilities using an Executor
  *
+ * <p>Implementing SwingUtilities using an Executor
  */
 public class SwingUtilities {
-    private static final ExecutorService exec = Executors.newSingleThreadExecutor(new SwingThreadFactory());
-    private static volatile Thread swingThread;
+  private static final ExecutorService exec =
+      Executors.newSingleThreadExecutor(new SwingThreadFactory());
+  private static volatile Thread swingThread;
 
-    private static class SwingThreadFactory implements ThreadFactory {
+  public static boolean isEventDispatchThread() {
+    return Thread.currentThread() == swingThread;
+  }
 
-        @Override
-        public Thread newThread(Runnable r) {
-            swingThread = new Thread(r);
-            return swingThread;
-        }
+  public static void invokeLater(Runnable task) {
+    exec.execute(task);
+  }
+
+  public static void invokeAndWait(Runnable task)
+      throws InvocationTargetException, InterruptedException {
+    Future<?> future = exec.submit(task);
+    try {
+      future.get();
+    } catch (ExecutionException e) {
+      throw new InvocationTargetException(e);
     }
+  }
 
-    public static boolean isEventDispatchThread() {
-        return Thread.currentThread() == swingThread;
-    }
+  private static class SwingThreadFactory implements ThreadFactory {
 
-    public static void invokeLater(Runnable task) {
-        exec.execute(task);
+    @Override
+    public Thread newThread(Runnable r) {
+      swingThread = new Thread(r);
+      return swingThread;
     }
-
-    public static void invokeAndWait(Runnable task) throws InvocationTargetException, InterruptedException {
-        Future<?> future = exec.submit(task);
-        try {
-            future.get();
-        } catch (ExecutionException e) {
-            throw new InvocationTargetException(e);
-        }
-    }
+  }
 }

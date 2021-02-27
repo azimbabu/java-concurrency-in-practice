@@ -8,13 +8,24 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * https://www.baeldung.com/cs/semaphore
- */
+/** https://www.baeldung.com/cs/semaphore */
 public class BoundedProducerConsumer {
 
   private static final AtomicInteger counter = new AtomicInteger();
   private static final int MAX = 100;
+
+  public static void main(String[] args) {
+    Semaphore full = new Semaphore(0);
+    Semaphore empty = new Semaphore(10);
+    Semaphore mutex = new Semaphore(1);
+    Deque<Integer> buffer = new ArrayDeque<>();
+
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(new BoundedProducerConsumer.Producer(buffer, full, empty, mutex));
+    executorService.execute(new BoundedProducerConsumer.Consumer(buffer, full, empty, mutex));
+
+    executorService.shutdown();
+  }
 
   static class Producer implements Runnable {
     private Deque<Integer> buffer;
@@ -39,7 +50,13 @@ public class BoundedProducerConsumer {
           mutex.acquire();
 
           buffer.offer(value);
-          System.out.println("Thread=" + Thread.currentThread().getName() + ", produced=" + value + ", count=" + counter.get());
+          System.out.println(
+              "Thread="
+                  + Thread.currentThread().getName()
+                  + ", produced="
+                  + value
+                  + ", count="
+                  + counter.get());
 
           mutex.release();
           full.release();
@@ -95,18 +112,5 @@ public class BoundedProducerConsumer {
         e.printStackTrace();
       }
     }
-  }
-
-  public static void main(String[] args) {
-    Semaphore full = new Semaphore(0);
-    Semaphore empty = new Semaphore(10);
-    Semaphore mutex = new Semaphore(1);
-    Deque<Integer> buffer = new ArrayDeque<>();
-
-    ExecutorService executorService = Executors.newCachedThreadPool();
-    executorService.execute(new BoundedProducerConsumer.Producer(buffer, full, empty, mutex));
-    executorService.execute(new BoundedProducerConsumer.Consumer(buffer, full, empty, mutex));
-
-    executorService.shutdown();
   }
 }

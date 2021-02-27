@@ -4,19 +4,18 @@ import java.util.concurrent.ThreadFactory;
 
 /**
  * MyThreadFactory
- * <p/>
- * Custom thread factory
  *
+ * <p>Custom thread factory
  */
 public class MyThreadFactory implements ThreadFactory {
-    private final String poolName;
+  private final String poolName;
 
-    public MyThreadFactory(String poolName) {
-        this.poolName = poolName;
-    }
+  public MyThreadFactory(String poolName) {
+    this.poolName = poolName;
+  }
 
-    @Override
-    public Thread newThread(Runnable runnable) {
-        return new MyAppThread(runnable, poolName);
-    }
+  @Override
+  public Thread newThread(Runnable runnable) {
+    return new MyAppThread(runnable, poolName);
+  }
 }

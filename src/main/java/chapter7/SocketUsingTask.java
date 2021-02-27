@@ -7,6 +7,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.*;
 
+interface CancellableTask<T> extends Callable<T> {
+  void cancel();
+
+  RunnableFuture<T> newTask();
+}
+
 /**
  * SocketUsingTask
  *
@@ -43,12 +49,6 @@ public abstract class SocketUsingTask<T> implements CancellableTask<T> {
       }
     };
   }
-}
-
-interface CancellableTask<T> extends Callable<T> {
-  void cancel();
-
-  RunnableFuture<T> newTask();
 }
 
 @ThreadSafe
@@ -97,7 +97,7 @@ class CancellingExecutor extends ThreadPoolExecutor {
   @Override
   protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
     if (callable instanceof CancellableTask) {
-        return ((CancellableTask<T>) callable).newTask();
+      return ((CancellableTask<T>) callable).newTask();
     } else {
       return super.newTaskFor(callable);
     }

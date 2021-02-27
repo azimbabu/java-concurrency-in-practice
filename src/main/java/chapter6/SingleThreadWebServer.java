@@ -6,20 +6,19 @@ import java.net.Socket;
 
 /**
  * SingleThreadWebServer
- * <p/>
- * Sequential web server
  *
+ * <p>Sequential web server
  */
 public class SingleThreadWebServer {
   public static void main(String[] args) throws IOException {
-      ServerSocket socket = new ServerSocket(80);
-      while (true) {
-          Socket connection = socket.accept();
-          handleRequest(connection);
-      }
+    ServerSocket socket = new ServerSocket(80);
+    while (true) {
+      Socket connection = socket.accept();
+      handleRequest(connection);
+    }
   }
 
-    private static void handleRequest(Socket connection) {
-        // request-handling logic here
-    }
+  private static void handleRequest(Socket connection) {
+    // request-handling logic here
+  }
 }

@@ -6,16 +6,14 @@ import java.util.Set;
 /**
  * Secrets
  *
- * Publishing an object
- *
+ * <p>Publishing an object
  */
 public class Secrets {
-    public static Set<Secret> knownSecrets;
+  public static Set<Secret> knownSecrets;
 
-    public void initialize() {
-        knownSecrets = new HashSet<>();
-    }
+  public void initialize() {
+    knownSecrets = new HashSet<>();
+  }
 }
 
-class Secret {
-}
+class Secret {}

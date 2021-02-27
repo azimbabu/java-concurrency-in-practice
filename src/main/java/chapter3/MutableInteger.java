@@ -4,19 +4,18 @@ import annotations.NotThreadSafe;
 
 /**
  * MutableInteger
- * <p/>
- * Non-thread-safe mutable integer holder
  *
+ * <p>Non-thread-safe mutable integer holder
  */
 @NotThreadSafe
 public class MutableInteger {
-    private int value;
+  private int value;
 
-    public int get() {
-        return value;
-    }
+  public int get() {
+    return value;
+  }
 
-    public void set(int value) {
-        this.value = value;
-    }
+  public void set(int value) {
+    this.value = value;
+  }
 }

@@ -8,33 +8,35 @@ import java.util.Set;
 
 /**
  * ServerStatusBeforeSplit
- * <p/>
- * Candidate for lock splitting
  *
+ * <p>Candidate for lock splitting
  */
 @ThreadSafe
 public class ServerStatusBeforeSplit {
-    @GuardedBy("this") private final Set<String> users;
-    @GuardedBy("this") private final Set<String> queries;
+  @GuardedBy("this")
+  private final Set<String> users;
 
-    public ServerStatusBeforeSplit() {
-        users = new HashSet<>();
-        queries = new HashSet<>();
-    }
+  @GuardedBy("this")
+  private final Set<String> queries;
 
-    public synchronized void addUser(String user) {
-        users.add(user);
-    }
+  public ServerStatusBeforeSplit() {
+    users = new HashSet<>();
+    queries = new HashSet<>();
+  }
 
-    public synchronized void removeUser(String user) {
-        users.remove(user);
-    }
+  public synchronized void addUser(String user) {
+    users.add(user);
+  }
 
-    public synchronized void addQuery(String query) {
-        queries.add(query);
-    }
+  public synchronized void removeUser(String user) {
+    users.remove(user);
+  }
 
-    public synchronized void removeQuery(String query) {
-        queries.remove(query);
-    }
+  public synchronized void addQuery(String query) {
+    queries.add(query);
+  }
+
+  public synchronized void removeQuery(String query) {
+    queries.remove(query);
+  }
 }
