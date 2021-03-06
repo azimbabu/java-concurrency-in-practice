@@ -13,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 @ThreadSafe
 public class ValueLatch<T> {
   private final CountDownLatch done = new CountDownLatch(1);
+
   @GuardedBy("this")
   private T value = null;
 

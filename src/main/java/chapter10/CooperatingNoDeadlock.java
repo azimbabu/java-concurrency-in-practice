@@ -17,8 +17,10 @@ public class CooperatingNoDeadlock {
   @ThreadSafe
   class Taxi {
     private final Dispatcher dispatcher;
+
     @GuardedBy("this")
     private Point location;
+
     @GuardedBy("this")
     private Point destination;
 
