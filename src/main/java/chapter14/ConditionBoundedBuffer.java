@@ -20,6 +20,7 @@ public class ConditionBoundedBuffer<T> {
   private final Condition notFull = lock.newCondition();
   // CONDITION PREDICATE: notEmpty (count > 0)
   private final Condition notEmpty = lock.newCondition();
+
   @GuardedBy("lock")
   private final T[] items = (T[]) new Object[BUFFER_SIZE];
 
